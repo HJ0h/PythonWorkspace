@@ -49,22 +49,21 @@ file = "BankBook.txt"
 all_id = list()
 
 try:
-    f = open(file, "r", encoding="utf8")
-    ct = 0 # 파일에 기록된 고객 수
-    lines = f.readlines()
-    ix = 0
-    for line in lines:
-        ix += 1
-        if ix % 5 == 2: # 한 고객 당 5줄 중 2~4줄(계좌번호/이름/잔액)
-            a = line.split(":")
-        elif ix % 5 == 3:
-            b = line.split(":")
-        elif ix % 5 == 4:
-            c = line.split(":")
-        elif ix % 5 == 0: # 한 고객 마다 all_id에 Account클래스 객체(계좌) 추가
-            all_id.append(Account(int(a[1].rstrip()),b[1].lstrip().rstrip(),int(c[1].rstrip())))
-            ct += 1    
-    f.close()
+    with open(file, 'r', encoding='utf-8') as f:
+        ct = 0 # 파일에 기록된 고객 수
+        lines = f.readlines()
+        ix = 0
+        for line in lines:
+            ix += 1
+            if ix % 5 == 2: # 한 고객 당 5줄 중 2~4줄(계좌번호/이름/잔액)
+                a = line.split(":")
+            elif ix % 5 == 3:
+                b = line.split(":")
+            elif ix % 5 == 4:
+                c = line.split(":")
+            elif ix % 5 == 0: # 한 고객 마다 all_id에 Account클래스 객체(계좌) 추가
+                all_id.append(Account(int(a[1].rstrip()),b[1].lstrip().rstrip(),int(c[1].rstrip())))
+                ct += 1    
 except Exception as ex:
     print("파일 없습니다")
     print(ex)
