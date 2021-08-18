@@ -22,7 +22,7 @@ class Account:
         return "계좌번호: {0}\n이름: {1}\n잔액: {2}\n\n".format(self.userid, self.name, self.balance)
     
     # 계좌번호 호출
-    def getid(self):
+    def get_id(self):
         return self.userid
     
     # 입금
@@ -39,7 +39,7 @@ class Account:
             return money
     
     # 잔액 조회
-    def getBal(self):     
+    def get_Bal(self):     
         return self.balance
 
 
@@ -50,20 +50,20 @@ all_id = list()
 
 try:
     with open(file, 'r', encoding='utf-8') as f:
-        ct = 0 # 파일에 기록된 고객 수
+        fcn = 0 # 파일에 기록된 고객 수
         lines = f.readlines()
         ix = 0
         for line in lines:
             ix += 1
             if ix % 5 == 2: # 한 고객 당 5줄 중 2~4줄(계좌번호/이름/잔액)
-                a = line.split(":")
+                second = line.split(":")
             elif ix % 5 == 3:
-                b = line.split(":")
+                third = line.split(":")
             elif ix % 5 == 4:
-                c = line.split(":")
+                fourth = line.split(":")
             elif ix % 5 == 0: # 한 고객 마다 all_id에 Account클래스 객체(계좌) 추가
-                all_id.append(Account(int(a[1].rstrip()),b[1].lstrip().rstrip(),int(c[1].rstrip())))
-                ct += 1    
+                all_id.append(Account(int(second[1].rstrip()),third[1].lstrip().rstrip(),int(fourth[1].rstrip())))
+                fcn += 1    
 except Exception as ex:
     print("파일 없습니다")
     print(ex)
@@ -79,7 +79,8 @@ class BankManager:
     # 계좌번호 중복여부 판단
     def new_id(self,user): # Account 객체를 파리미터로 받음             
         for i in all_id:
-            if i.getid() == user.getid(): # 불러온 계좌 파일에 저장된 Account객체 계좌번호와 새로 만든 Account객체 계좌번호 비교
+            if i.get_id() == user.get_id():
+                # 불러온 계좌 파일에 저장된 Account객체 계좌번호와 새로 만든 Account객체 계좌번호 비교
                 return "입력하신 계좌번호는 이미 존재하는 계좌번호 입니다."
             
         all_id.append(user)
@@ -88,7 +89,7 @@ class BankManager:
     # 입금
     def deposit(self,userid):     
         for i in all_id:
-            if i.getid() == userid:
+            if i.get_id() == userid:
                 money = int(input("입금금액 = "))
                 bal = i.deposit(money)
                 print("잔액은 {0} 입니다.".format(bal))
@@ -99,7 +100,7 @@ class BankManager:
     # 출금
     def withdraw(self,userid):    
         for i in all_id:
-            if i.getid() == userid:
+            if i.get_id() == userid:
                 money = int(input("출금금액 = "))
                 return i.withdraw(money)
         print("해당하는 계좌가 없습니다.")
@@ -116,27 +117,26 @@ class BankManager:
                  
     # 파일에 저장
     def save(self, change):
-        global ct
+        global fcn
         if change == 0: # 입출금X
-            f = open(file, "a", encoding="utf8") # append
-            if ct == 0: # 파일 내용 empty
-                for i in all_id:
-                    f.write(f"[ {ct+1} 번째 고객 ]\n")
-                    f.write(i.info())
-                    ct += 1  
-            else: # 내용 有 
-                for i in all_id[ct:]:
-                    f.write(f"[ {ct+1} 번째 고객 ]\n")
-                    f.write(i.info())
-                    ct += 1
+            with open(file, 'r', encoding='utf-8') as f: # append
+                if fcn == 0: # 파일 내용 empty
+                    for i in all_id:
+                        f.write(f"[ {fcn+1} 번째 고객 ]\n")
+                        f.write(i.info())
+                        fcn += 1  
+                else: # 내용 有 
+                    for i in all_id[fcn:]:
+                        f.write(f"[ {fcn+1} 번째 고객 ]\n")
+                        f.write(i.info())
+                        fcn += 1
         else: # 입출금 > 잔액 변동 : write로 덮어쓰기
-            f = open(file, "w", encoding="utf8")
-            j = 1
-            for i in all_id:
-                    f.write(f"[ {j} 번째 고객 ]\n")
-                    f.write(i.info())
-                    j += 1   
-        f.close()
+            with open(file, 'w', encoding='utf-8') as f:
+                cn = 1 # 고객번호
+                for i in all_id:
+                        f.write(f"[ {j} 번째 고객 ]\n")
+                        f.write(i.info())
+                        cn += 1   
             
 
 # 은행 시스템 제공 인터페이스 클래스
